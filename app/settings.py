@@ -28,7 +28,7 @@ DEBUG = True
 PORT = 5555
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ilhamnyto.pythonanywhere.com']
 
 
 # Application definition
