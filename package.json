@@ -1,0 +1,23 @@
+{
+  "name": "manga-downloader-python",
+  "version": "1.0.0",
+  "description": "Manga downloader using python",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilhamnyto/manga-downloader-python.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ilhamnyto/manga-downloader-python/issues"
+  },
+  "homepage": "https://github.com/ilhamnyto/manga-downloader-python#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.3.2"
+  }
+}
