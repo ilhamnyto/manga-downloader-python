@@ -1,7 +1,51 @@
 <!-- templates/index.html -->
 
-{% extends "_base.html" %}
+{% extends "_base.html" %} {% block content %}
+<div class="m-4">
+  <form method="POST" onsubmit="onSubmitHandler(event)">
+    <div class="bg-red-500 min-w-full h-10 flex">
+      <input
+        type="text"
+        name="search"
+        id="search"
+        class="bg-gray-200 min-h-full w-4/5 px-2"
+      />
+      <button type="submit" class="flex-1 min-h-full bg-blue-400 text-sm">
+        Search
+      </button>
+    </div>
+  </form>
+</div>
+<div>
+  <div class="bg-gray-300 w-full">
+    <span class="flex justify-center items-center" id="no-content"
+      >no content</span
+    >
+  </div>
+</div>
+{% endblock content %} {% block script %}
+<script>
+  const mangeCard = document.createElement("div");
+  const label = document.getElementById("no-content");
+  console.log(label);
 
-{% block content %}
-  <h1 class="text-3xl text-green-800 text-center">Under Development.</h1>
-{% endblock content %}
+  async function onSubmitHandler(event) {
+    event.preventDefault();
+    console.log("fetch");
+    fetch("/api").then(async (resp) => {
+      const result = await resp.json();
+
+      displayMangaCard(result);
+    });
+  }
+
+  function displayMangaCard(data) {
+    mangeCard.innerHTML = data.message;
+
+    if (document.body.contains(label)) {
+      label.parentNode.insertBefore(mangeCard, label.nextSibling);
+      label.parentNode.removeChild(label);
+    }
+  }
+</script>
+{% endblock %}
