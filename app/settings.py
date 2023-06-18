@@ -28,7 +28,7 @@ DEBUG = True
 PORT = 5555
 
 
-ALLOWED_HOSTS = ['ilhamnyto.pythonanywhere.com', 'localhost', '.vercel.app', '.now.sh']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
