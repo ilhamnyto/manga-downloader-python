@@ -23,7 +23,6 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', index, name='index'),
     path('api/v1/', include('api.urls'), name='scrape')
 ]
