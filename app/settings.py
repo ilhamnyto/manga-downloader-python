@@ -28,7 +28,7 @@ DEBUG = True
 PORT = 5555
 
 
-ALLOWED_HOSTS = ['ilhamnyto.pythonanywhere.com', 'localhost']
+ALLOWED_HOSTS = ['ilhamnyto.pythonanywhere.com', 'localhost', '.vercel.app', '.now.sh']
 
 
 # Application definition
@@ -130,4 +130,4 @@ COMPRESS_ROOT = BASE_DIR / 'static'
 
 COMPRESS_ENABLED = True
 
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',) 
