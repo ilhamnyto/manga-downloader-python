@@ -155,7 +155,10 @@
         "Content-Type": "application/json",
       },
     })
-      .then(async (resp) => resp.blob())
+      .then(async (resp) => {
+        console.log(resp);
+        return resp.blob();
+      })
       .then((blob) => {
         var file = window.URL.createObjectURL(blob);
         var a = document.createElement("a");
