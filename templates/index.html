@@ -1,50 +1,195 @@
 <!-- templates/index.html -->
 
 {% extends "_base.html" %} {% block content %}
-<div class="m-4">
-  <form method="POST" onsubmit="onSubmitHandler(event)">
-    <div class="bg-red-500 min-w-full h-10 flex">
-      <input
-        type="text"
-        name="search"
-        id="search"
-        class="bg-gray-200 min-h-full w-4/5 px-2"
-      />
-      <button type="submit" class="flex-1 min-h-full bg-blue-400 text-sm">
-        Search
-      </button>
-    </div>
-  </form>
-</div>
-<div>
-  <div class="bg-gray-300 w-full">
+<main class="mx-4">
+  <div class="mt-16 mb-4">
+    <form method="POST" onsubmit="onSubmitHandler(event)">
+      {% csrf_token %}
+      <div class="min-w-full h-10 flex">
+        <input
+          type="text"
+          name="search"
+          id="search"
+          class="bg-gray-200 min-h-full w-4/5 px-2"
+        />
+        <button type="submit" class="flex-1 min-h-full bg-blue-400 text-sm">
+          Search
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="bg-gray-300 w-full p-2 max-h-96 overflow-auto" id="content-box">
     <span class="flex justify-center items-center" id="no-content"
       >no content</span
     >
   </div>
-</div>
+  <span
+    class="flex justify-center items-center text-gray-300 mt-5"
+    id="no-content"
+    >Developed by ilhamnyto.</span
+  >
+</main>
 {% endblock content %} {% block script %}
 <script>
-  const mangeCard = document.createElement("div");
+  const contentBox = document.getElementById("content-box");
   const label = document.getElementById("no-content");
-  console.log(label);
+  const search = document.getElementById("search");
+  csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-  async function onSubmitHandler(event) {
-    event.preventDefault();
-    console.log("fetch");
-    fetch("/api").then(async (resp) => {
-      const result = await resp.json();
+  async function displayMangaCard(data) {
+    let chapterCard = document.querySelectorAll(".chapter-btn");
+    let mangarCard = document.querySelectorAll(".manga-btn");
+    const loadingText = document.getElementById("loading");
+    const completeText = document.getElementById("completed");
 
-      displayMangaCard(result);
+    if (document.body.contains(loadingText)) {
+      loadingText.remove();
+    }
+
+    if (document.body.contains(completeText)) {
+      completeText.remove();
+    }
+
+    if (chapterCard.length) {
+      chapterCard.forEach((el) => el.remove());
+    }
+
+    if (mangarCard.length) {
+      mangarCard.forEach((el) => el.remove());
+    }
+
+    if (data.data.length) {
+      data.data.map((el) => {
+        let mangaCard = `<button class="block manga-btn hover:text-gray-400 text-left" onclick="mangaOnClick(event)" value="${el.url}">${el.title}</a>`;
+
+        contentBox.innerHTML += mangaCard;
+      });
+    } else {
+      contentBox.innerHTML += `<span class="flex justify-center items-center no-content" id="no-content">no content</span>`;
+    }
+  }
+
+  async function displayChapterCard(data) {
+    let mangaCard = document.querySelectorAll(".manga-btn");
+    const loadingText = document.getElementById("loading");
+
+    if (document.body.contains(loadingText)) {
+      loadingText.remove();
+    }
+
+    if (mangaCard.length) {
+      mangaCard.forEach((el) => el.remove());
+    }
+
+    data.data.map((el) => {
+      let chapterCard = `<button class="block chapter-btn hover:text-gray-400 text-left" onclick="chapterOnClick(event)" value="${el.url}">${el.title}</a>`;
+
+      contentBox.innerHTML += chapterCard;
     });
   }
 
-  function displayMangaCard(data) {
-    mangeCard.innerHTML = data.message;
+  async function showLoading(text) {
+    let loading = `<span class="flex justify-center items-center" id="loading">${text}</span>`;
+    let mangaCard = document.querySelectorAll(".manga-btn");
+    let chapterCard = document.querySelectorAll(".chapter-btn");
+    let noContent = document.querySelectorAll(".no-content");
+    const completeText = document.getElementById("completed");
 
     if (document.body.contains(label)) {
-      label.parentNode.insertBefore(mangeCard, label.nextSibling);
-      label.parentNode.removeChild(label);
+      label.remove();
+    }
+
+    if (document.body.contains(completeText)) {
+      completeText.remove();
+    }
+
+    if (mangaCard.length) {
+      mangaCard.forEach((el) => el.remove());
+    }
+
+    if (noContent.length) {
+      noContent.forEach((el) => el.remove());
+    }
+
+    if (chapterCard.length) {
+      chapterCard.forEach((el) => el.remove());
+    }
+
+    contentBox.innerHTML += loading;
+  }
+
+  async function showComplete() {
+    const loadingText = document.getElementById("loading");
+    let complete = `<span class="flex justify-center items-center" id="completed">Your file is ready to download!</span>`;
+
+    if (document.body.contains(loadingText)) {
+      loadingText.remove();
+    }
+
+    contentBox.innerHTML += complete;
+  }
+
+  async function mangaOnClick(event) {
+    showLoading("load chapter...");
+    search.setAttribute("disabled", "");
+    fetch(`/api/v1/chapter/${event.target.value}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }).then(async (resp) => {
+      const result = await resp.json();
+      displayChapterCard(result);
+      search.removeAttribute("disabled");
+    });
+  }
+
+  async function chapterOnClick(event) {
+    showLoading("preparing your file...");
+    search.setAttribute("disabled", "");
+    fetch(`/api/v1/image/${event.target.value}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (resp) => resp.blob())
+      .then((blob) => {
+        var file = window.URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = file;
+        a.download = "manga.pdf";
+
+        // Simulate a click on the anchor element
+        var event = new MouseEvent("click");
+        a.dispatchEvent(event);
+        search.removeAttribute("disabled");
+        showComplete();
+      });
+  }
+
+  async function onSubmitHandler(event) {
+    event.preventDefault();
+    if (search.value) {
+      showLoading("load manga...");
+      search.setAttribute("disabled", "");
+      fetch("/api/v1/search", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrf_token,
+        },
+        body: JSON.stringify({ keyword: search.value }),
+      }).then(async (resp) => {
+        const result = await resp.json();
+        displayMangaCard(result);
+        search.removeAttribute("disabled");
+      });
+
+      search.value = "";
     }
   }
 </script>
