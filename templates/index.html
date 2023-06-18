@@ -156,8 +156,6 @@
       },
     })
       .then(async (resp) => {
-        res = await resp.json()
-        console.log(res);
         return resp.blob();
       })
       .then((blob) => {
