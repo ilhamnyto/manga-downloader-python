@@ -48,7 +48,7 @@ async def get_image(request, id):
     if request.method == 'GET':
         
         try:
-            url = 'https://ww5.mangakakalot.tv//' + id
+            url = 'https://ww5.mangakakalot.tv' + id
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as response:
                     content = await response.text()
