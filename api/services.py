@@ -47,8 +47,8 @@ async def get_chapter(request, id):
 async def get_image(request, id):
     if request.method == 'GET':
         
+        url = 'https://ww5.mangakakalot.tv' + id
         try:
-            url = 'https://ww5.mangakakalot.tv' + id
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as response:
                     content = await response.text()
@@ -91,7 +91,7 @@ async def get_image(request, id):
                     response['Content-Disposition'] = 'attachment; filename="example.pdf"'
 
                     return response
-        except Exception as e:
-            return JsonResponse({"message": e})
+        except aiohttp.ClientConnectorError as e:
+            return JsonResponse({"message": url})
 
 
