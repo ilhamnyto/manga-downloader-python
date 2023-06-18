@@ -91,7 +91,7 @@ async def get_image(request, id):
                     response['Content-Disposition'] = 'attachment; filename="example.pdf"'
 
                     return response
-        except aiohttp.ClientConnectorError as e:
+        except Exception as e:
             return JsonResponse({"message": url})
 
 
